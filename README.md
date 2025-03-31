@@ -16,7 +16,7 @@ Breve descrição do projeto.
 
 1. Clone o repositório:&#8203;:contentReference[oaicite:37]{index=37}
    ```bash
-   git clone https://github.com/seu-usuario/nome-do-repositorio.git
+   git clone https://github.com/GabrielMacielZavarize/API-IA.git
 
 2. Navegue até o diretório do projeto:
     ```bash
