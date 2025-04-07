@@ -1,6 +1,6 @@
-# Nome do Projeto
+# GeminiAI
 
-Breve descrição do projeto.
+Projeto de IA feito por alunos da faculdade SATC
 
 ## Estrutura do Projeto
 

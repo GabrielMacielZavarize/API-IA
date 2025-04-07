@@ -1,9 +1,9 @@
 import tkinter as tk
-from tkinter import scrolledtext
+from tkinter import scrolledtext, font
 
 class ChatbotGUI:
     """
-    Classe para criar a interface gráfica do chatbot utilizando Tkinter.
+    Classe para criar uma interface gráfica mais bonita para o chatbot utilizando Tkinter.
     """
 
     def __init__(self, root, enviar_mensagem_callback):
@@ -16,25 +16,71 @@ class ChatbotGUI:
         """
         self.root = root
         self.root.title("Chatbot do Restaurante")
+        self.root.geometry("700x500")  # Define o tamanho da janela
+        self.root.configure(bg="#f0f0f0")  # Define uma cor de fundo suave
 
-        self.chat_area = scrolledtext.ScrolledText(root, wrap=tk.WORD, width=60, height=20, state='disabled')
-        self.chat_area.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
+        # Define uma fonte personalizada para os textos
+        self.custom_font = font.Font(family="Helvetica", size=12)
 
-        self.mensagem_entry = tk.Entry(root, width=50)
-        self.mensagem_entry.grid(row=1, column=0, padx=10, pady=10)
+        # Cria um título para a aplicação com uma cor de fundo destacada
+        self.title_label = tk.Label(
+            root, 
+            text="Chatbot do Restaurante", 
+            bg="#4a7a8c", 
+            fg="white", 
+            font=("Helvetica", 16, "bold"), 
+            pady=10
+        )
+        self.title_label.pack(fill=tk.X)
+
+        # Cria a área de chat com uma scrolledtext para exibir as mensagens
+        self.chat_area = scrolledtext.ScrolledText(
+            root, 
+            wrap=tk.WORD, 
+            width=80, 
+            height=20, 
+            state='disabled', 
+            font=self.custom_font, 
+            bg="white", 
+            fg="black", 
+            padx=10, 
+            pady=10
+        )
+        self.chat_area.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+
+        # Configurar tags para cores diferentes
+        self.chat_area.tag_config("cliente", foreground="black")
+        self.chat_area.tag_config("garconete", foreground="blue")
+
+        # Cria um frame para agrupar o campo de entrada e o botão de enviar
+        self.entry_frame = tk.Frame(root, bg="#f0f0f0")
+        self.entry_frame.pack(fill=tk.X, padx=10, pady=10)
+
+        # Campo de entrada para a mensagem do usuário
+        self.mensagem_entry = tk.Entry(
+            self.entry_frame, 
+            font=self.custom_font, 
+            width=60
+        )
+        self.mensagem_entry.pack(side=tk.LEFT, padx=(0, 10), fill=tk.X, expand=True)
         self.mensagem_entry.bind("<Return>", self._enviar_mensagem_evento)
 
-        self.enviar_button = tk.Button(root, text="Enviar", command=self._enviar_mensagem)
-        self.enviar_button.grid(row=1, column=1, padx=10, pady=10)
+        # Botão para enviar a mensagem
+        self.enviar_button = tk.Button(
+            self.entry_frame, 
+            text="Enviar", 
+            font=self.custom_font, 
+            bg="#4a7a8c", 
+            fg="white", 
+            command=self._enviar_mensagem
+        )
+        self.enviar_button.pack(side=tk.RIGHT)
 
         self.enviar_mensagem_callback = enviar_mensagem_callback
 
     def _enviar_mensagem_evento(self, event):
         """
         Manipula o evento de pressionar Enter no campo de entrada.
-
-        Parâmetros:
-        - event: Evento do Tkinter.
         """
         self._enviar_mensagem()
 
@@ -49,13 +95,12 @@ class ChatbotGUI:
 
     def exibir_mensagem(self, remetente, mensagem):
         """
-        Exibe uma mensagem na área de chat.
-
-        Parâmetros:
-        - remetente (str): Nome do remetente da mensagem.
-        - mensagem (str): Conteúdo da mensagem.
+        Exibe uma mensagem na área de chat, diferenciando o remetente por cor.
         """
         self.chat_area.config(state='normal')
-        self.chat_area.insert(tk.END, f"{remetente}: {mensagem}\n")
+        if remetente.lower() == "garçonete":
+            self.chat_area.insert(tk.END, f"{remetente}: {mensagem}\n\n", "garconete")
+        else:
+            self.chat_area.insert(tk.END, f"{remetente}: {mensagem}\n\n", "cliente")
         self.chat_area.yview(tk.END)
         self.chat_area.config(state='disabled')
