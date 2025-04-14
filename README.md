@@ -1,4 +1,4 @@
-# GeminiAI
+# Explica AI
 
 Projeto de IA feito por alunos da faculdade SATC
 
