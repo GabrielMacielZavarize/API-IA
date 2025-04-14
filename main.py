@@ -2,13 +2,16 @@ import tkinter as tk
 from gui import ChatbotGUI
 from history import HistoricoConversa
 from logic import obter_resposta_do_gemini
-from propts import PROMPT_GARCONETE, PROMPT_MENU, PROMPT_PROMOCOES
+from propts import PROMPT_GARCONETE, PROMPT_MENU  # Certifique-se que o nome do arquivo seja "propts.py" ou "prompts.py"
 
 def main():
     # Inicializa o histórico da conversa
     historico = HistoricoConversa()
+    
+    # Concatena os dois prompts em uma única string
+    prompt_inicial = PROMPT_GARCONETE + "\n\n" + PROMPT_MENU
     # Adiciona o prompt inicial (oculto)
-    historico.adicionar_prompt_inicial(PROMPT_GARCONETE)
+    historico.adicionar_prompt_inicial(prompt_inicial)
 
     # Função que será chamada ao enviar uma mensagem
     def enviar_mensagem(mensagem):
@@ -26,10 +29,6 @@ def main():
     root = tk.Tk()
     # Inicializa a interface gráfica do chatbot
     gui = ChatbotGUI(root, enviar_mensagem)
-
-    # (Opcional) Exemplo de como você poderia usar mais prompts:
-    # gui.exibir_mensagem("Garçonete", PROMPT_MENU)      # Se quiser exibir algo do menu
-    # gui.exibir_mensagem("Garçonete", PROMPT_PROMOCOES) # Se quiser exibir promoções
 
     # Inicia o loop principal da interface gráfica
     root.mainloop()

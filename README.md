@@ -14,7 +14,7 @@ Projeto de IA feito por alunos da faculdade SATC
 
 ## Configuração
 
-1. Clone o repositório:&#8203;:contentReference[oaicite:37]{index=37}
+1. Clone o repositório:
    ```bash
    git clone https://github.com/GabrielMacielZavarize/API-IA.git
 
