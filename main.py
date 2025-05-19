@@ -2,14 +2,37 @@ import tkinter as tk
 from gui import ChatbotGUI
 from history import HistoricoConversa
 from logic import obter_resposta_do_gemini
-from propts import PROMPT_GARCONETE, PROMPT_MENU  # Certifique-se que o nome do arquivo seja "propts.py" ou "prompts.py"
+from propts import (
+    PROMPT_GARCONETE,
+    PROMPT_CATEGORIAS,
+    PROMPT_LANCHES,
+    PROMPT_COMBOS,
+    PROMPT_ACOMPANHAMENTOS,
+    PROMPT_BEBIDAS,
+    PROMPT_SOBREMESAS,
+    PROMPT_PROMOCOES,
+    PROMPT_ENTREGA,
+    PROMPT_PAGAMENTO
+)
 
 def main():
     # Inicializa o histórico da conversa
     historico = HistoricoConversa()
     
-    # Concatena os dois prompts em uma única string
-    prompt_inicial = PROMPT_GARCONETE + "\n\n" + PROMPT_MENU
+    # Concatena os prompts em uma única string
+    prompt_inicial = (
+        PROMPT_GARCONETE + "\n\n" +
+        PROMPT_CATEGORIAS + "\n\n" +
+        PROMPT_LANCHES + "\n\n" +
+        PROMPT_COMBOS + "\n\n" +
+        PROMPT_ACOMPANHAMENTOS + "\n\n" +
+        PROMPT_BEBIDAS + "\n\n" +
+        PROMPT_SOBREMESAS + "\n\n" +
+        PROMPT_PROMOCOES + "\n\n" +
+        PROMPT_ENTREGA + "\n\n" +
+        PROMPT_PAGAMENTO
+    )
+    
     # Adiciona o prompt inicial (oculto)
     historico.adicionar_prompt_inicial(prompt_inicial)
 

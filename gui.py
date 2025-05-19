@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+import tkinter.font as tkfont
 
 class ChatBubble(tk.Frame):
     """
@@ -10,34 +11,34 @@ class ChatBubble(tk.Frame):
 
         # Define cores e alinhamento de acordo com o remetente
         if is_user:
-            bg_color = "#DCF8C6"  # Balão verde claro para o Cliente
-            anchor = "w"         # Alinha à esquerda
+            bg_color = "#DCF8C6"  # Verde claro do WhatsApp para o Cliente
+            anchor = "w"
         else:
-            bg_color = "#ADD8E6"  # Balão azul claro para a Garçonete
-            anchor = "e"         # Alinha à direita
+            bg_color = "#FFFFFF"  # Branco para a Garçonete
+            anchor = "e"
 
-        # Rótulo com o nome do remetente (ex: "Cliente" ou "Garçonete")
+        # Rótulo com o nome do remetente
         self.remetente_label = tk.Label(
             self,
             text=remetente,
-            font=("Helvetica", 9, "bold"),
-            fg="gray",
-            bg=self["bg"] if "bg" in self.keys() else "#f0f0f0"
+            font=("Segoe UI", 14, "bold"),
+            fg="#075E54",  # Verde escuro do WhatsApp
+            bg=self["bg"] if "bg" in self.keys() else "#F0F2F5"  # Cinza claro do WhatsApp
         )
         self.remetente_label.pack(side=tk.TOP, anchor=anchor, padx=5)
 
-        # Label que contém o texto da mensagem (o balão)
+        # Label que contém o texto da mensagem
         self.label = tk.Label(
             self,
             text=message,
             bg=bg_color,
-            wraplength=400,
+            wraplength=800,  # Aumentado para mais texto
             justify="left",
-            font=("Helvetica", 12),
-            padx=10,
-            pady=5,
-            bd=2,
-            relief="ridge"
+            font=("Segoe UI", 16),  # Fonte maior
+            padx=20,
+            pady=15,
+            bd=0,
+            relief="flat"
         )
         self.label.pack(side=tk.TOP, anchor=anchor, padx=5)
 
@@ -47,11 +48,11 @@ class ChatFrame(tk.Frame):
     """
     def __init__(self, parent, **kwargs):
         super().__init__(parent, **kwargs)
-        self.config(bg="#f0f0f0")
+        self.config(bg="#F0F2F5")  # Fundo cinza claro do WhatsApp
 
         # Canvas para permitir a rolagem
-        self.canvas = tk.Canvas(self, borderwidth=0, background="#f0f0f0")
-        self.frame = tk.Frame(self.canvas, bg="#f0f0f0")
+        self.canvas = tk.Canvas(self, borderwidth=0, background="#F0F2F5", highlightthickness=0)
+        self.frame = tk.Frame(self.canvas, bg="#F0F2F5")
         self.vsb = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.vsb.set)
 
@@ -59,8 +60,19 @@ class ChatFrame(tk.Frame):
         self.canvas.pack(side="left", fill="both", expand=True)
         self.canvas_window = self.canvas.create_window((4, 4), window=self.frame, anchor="nw")
 
+        # Configurar eventos de scroll
+        self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
+        self.canvas.bind_all("<Button-4>", self._on_mousewheel)
+        self.canvas.bind_all("<Button-5>", self._on_mousewheel)
+
         self.frame.bind("<Configure>", self._on_frame_configure)
         self.canvas.bind("<Configure>", self._on_canvas_configure)
+
+    def _on_mousewheel(self, event):
+        if event.num == 5 or event.delta < 0:  # scroll down
+            self.canvas.yview_scroll(1, "units")
+        elif event.num == 4 or event.delta > 0:  # scroll up
+            self.canvas.yview_scroll(-1, "units")
 
     def _on_frame_configure(self, event):
         """Atualiza a área rolável conforme o tamanho do frame interno."""
@@ -81,19 +93,19 @@ class ChatFrame(tk.Frame):
             is_user (bool): True para mensagem do Cliente (alinhada à esquerda), False para
                             mensagem da Garçonete (alinhada à direita).
         """
-        container = tk.Frame(self.frame, bg="#f0f0f0")
+        container = tk.Frame(self.frame, bg="#F0F2F5")
         # Alinha o container com base em is_user
         if is_user:
-            container.pack(anchor="w", fill="x", pady=5)
+            container.pack(anchor="w", fill="x", pady=10)
         else:
-            container.pack(anchor="e", fill="x", pady=5)
+            container.pack(anchor="e", fill="x", pady=10)
 
-        bubble = ChatBubble(container, remetente, message, is_user=is_user, bg="#f0f0f0")
+        bubble = ChatBubble(container, remetente, message, is_user=is_user, bg="#F0F2F5")
         # Posiciona o balão dentro do container com padding lateral
         if is_user:
-            bubble.pack(side="left", padx=(10, 50))
+            bubble.pack(side="left", padx=(20, 100))
         else:
-            bubble.pack(side="right", padx=(50, 10))
+            bubble.pack(side="right", padx=(100, 20))
 
 class ChatbotGUI:
     """
@@ -103,39 +115,91 @@ class ChatbotGUI:
     """
     def __init__(self, root, enviar_mensagem_callback):
         self.root = root
-        self.root.title("Chatbot do Restaurante")
-        self.root.geometry("800x600")
-        self.root.configure(bg="#f0f0f0")
+        self.root.title("BigFood - Chatbot")
+        self.root.geometry("1400x900")
+        self.root.configure(bg="#F0F2F5")
+
+        # Configurar estilo
+        style = ttk.Style()
+        style.configure("Custom.TFrame", background="#F0F2F5")
+        
+        # Configurar estilo do botão
+        style.configure("Custom.TButton",
+                       font=("Segoe UI", 16, "bold"),
+                       padding=(25, 15),
+                       background="#128C7E",
+                       foreground="white")
+        
+        # Configurar estilo do campo de entrada
+        style.configure("Custom.TEntry",
+                       font=("Segoe UI", 16),
+                       padding=15)
 
         # Frame principal
-        self.main_frame = ttk.Frame(root, padding="10")
+        self.main_frame = ttk.Frame(root, style="Custom.TFrame", padding="30")
         self.main_frame.pack(fill="both", expand=True)
 
-        # Título da aplicação
-        self.title_label = ttk.Label(
-            self.main_frame,
-            text="Chatbot do Restaurante",
-            background="#4a7a8c",
-            foreground="white",
-            font=("Helvetica", 18, "bold"),
-            anchor="center"
-        )
-        self.title_label.pack(fill="x", pady=(0, 10))
+        # Cabeçalho
+        header_frame = ttk.Frame(self.main_frame, style="Custom.TFrame")
+        header_frame.pack(fill="x", pady=(0, 30))
 
-        # Área de chat
-        self.chat_frame = ChatFrame(self.main_frame, bg="#f0f0f0")
+        # Container centralizado para título
+        title_container = ttk.Frame(header_frame, style="Custom.TFrame")
+        title_container.pack(expand=True, fill="x")
+
+        # Frame para título
+        title_frame = ttk.Frame(title_container, style="Custom.TFrame")
+        title_frame.pack(expand=True)
+
+        # Título principal com separador
+        title_text = "BigFood - Assistente Virtual"
+        self.title_label = ttk.Label(
+            title_frame,
+            text=title_text,
+            font=("Segoe UI", 32, "bold"),
+            foreground="#075E54",
+            background="#F0F2F5"
+        )
+        self.title_label.pack()
+
+        # Área de chat com borda suave
+        chat_container = ttk.Frame(self.main_frame, style="Custom.TFrame")
+        chat_container.pack(fill="both", expand=True, pady=(0, 20))
+        
+        self.chat_frame = ChatFrame(chat_container)
         self.chat_frame.pack(fill="both", expand=True)
 
-        # Frame para entrada de mensagem e botão de envio
-        self.entry_frame = ttk.Frame(self.main_frame)
-        self.entry_frame.pack(fill="x", pady=(10, 0))
+        # Frame para entrada de mensagem com sombra
+        self.entry_frame = ttk.Frame(self.main_frame, style="Custom.TFrame")
+        self.entry_frame.pack(fill="x", pady=(20, 0))
 
-        self.mensagem_entry = ttk.Entry(self.entry_frame, font=("Helvetica", 12))
-        self.mensagem_entry.pack(side="left", fill="x", expand=True, padx=(0, 10))
+        # Container para entrada e botão
+        input_container = ttk.Frame(self.entry_frame, style="Custom.TFrame")
+        input_container.pack(fill="x", expand=True)
+
+        # Campo de entrada com estilo moderno
+        self.mensagem_entry = ttk.Entry(
+            input_container,
+            font=("Segoe UI", 16),
+            style="Custom.TEntry"
+        )
+        self.mensagem_entry.pack(side="left", fill="x", expand=True, padx=(0, 15))
         self.mensagem_entry.bind("<Return>", self._enviar_mensagem_evento)
 
-        self.enviar_button = ttk.Button(self.entry_frame, text="Enviar", command=self._enviar_mensagem)
-        self.enviar_button.pack(side="right")
+        # Botão de enviar com estilo moderno
+        self.enviar_button = tk.Button(
+            input_container,
+            text="Enviar",
+            font=("Segoe UI", 16, "bold"),
+            bg="#128C7E",
+            fg="white",
+            padx=25,
+            pady=0,
+            relief="flat",
+            command=self._enviar_mensagem,
+            height=1
+        )
+        self.enviar_button.pack(side="right", fill="y")
 
         self.enviar_mensagem_callback = enviar_mensagem_callback
 
